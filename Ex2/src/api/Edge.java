@@ -17,7 +17,7 @@ public class Edge implements EdgeData {
         this.src = src;
         this.dst = dst;
         this.weight = weight;
-        this.info = this.src.id + "," + this.weight + "," + this.dst.id;
+        this.info = this.src.id + ","  + this.dst.id  + "," + this.weight;
         this.tag = 0;
     }
 

@@ -2,6 +2,8 @@ package api;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DWGTest {
@@ -23,6 +25,27 @@ class DWGTest {
         g.connect(0,2, 1);
         // Make sure does not exist
         assertNull(g.getEdge(0,2));
+
+        Vertex disconnected = (Vertex) g.removeNode(0);
+        assertNull(g.getNode(0));
+
+
+        // Make sure runtime exception is raised for insertion after iterator is born.
+        boolean flag = false;
+        Iterator<EdgeData> t = g.edgeIter();
+        try
+        {
+            g.addNode(disconnected);
+        }
+        catch (RuntimeException e)
+        {
+            flag = true;
+        }
+        assertTrue(flag);
+    }
+
+    @Test
+    void t2() {
 
     }
 
