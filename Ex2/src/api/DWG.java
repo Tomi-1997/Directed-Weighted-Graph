@@ -116,7 +116,7 @@ public class DWG implements DirectedWeightedGraph{
         while (t.hasNext())
         {
             this.E.remove(t+"");
-            t.remove();
+            t.next();
         }
         return this.V.remove(key+"");
     }

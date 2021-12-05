@@ -1,6 +1,7 @@
 package api;
 
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Node;
 
 import java.util.Iterator;
 
@@ -21,11 +22,12 @@ class DWGTest {
 
         g.connect(0,1, 1);
 
-        // Invalid
+        // Try to connect edge with non-existent node
         g.connect(0,2, 1);
-        // Make sure does not exist
+        // Make sure it does not exist
         assertNull(g.getEdge(0,2));
 
+        // Disconnect vertex and make sure it is null afterwards.
         Vertex disconnected = (Vertex) g.removeNode(0);
         assertNull(g.getNode(0));
 
@@ -46,7 +48,31 @@ class DWGTest {
 
     @Test
     void t2() {
+        int N = 10;
+        for (int i = 0; i < N; i++)
+        {
+            g.addNode( new Vertex(new Point3D(i,0,0) , i));
+        }
 
+        Iterator iter = g.nodeIter();
+        int counter = 0;
+
+        // Make sure iterator iterates over all nodes
+        while(iter.hasNext())
+        {
+         counter++;
+         iter.next();
+        }
+        assertEquals(g.nodeSize(), counter);
+
+        // Make sure iterator deletion deletes all nodes
+        iter = g.nodeIter();
+        while (iter.hasNext())
+        {
+            iter.next();
+            iter.remove();
+        }
+        assertEquals(g.nodeSize(), 0);
     }
 
 //    @Test
