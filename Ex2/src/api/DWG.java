@@ -2,6 +2,8 @@ package api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class DWG implements DirectedWeightedGraph{
 
@@ -59,7 +61,7 @@ public class DWG implements DirectedWeightedGraph{
         boolean illegal_v = !V.containsKey(src+"") || !V.containsKey(dest+"");
         if ( src == dest || w < 0 || illegal_v)
         {
-            System.err.println("Invalid insertion");
+            System.err.println("Invalid insertion, tried to insert:" + src + "," + dest);
             return;
         }
         Edge e_new = new Edge(V.get(src+""), V.get(dest+"") , w);
@@ -71,6 +73,11 @@ public class DWG implements DirectedWeightedGraph{
             E.put(src+","+dest, e_new);
 
         changes++;
+    }
+
+    public void connect(Edge e)
+    {
+        connect(e.src.id, e.dst.id, e.weight);
     }
 
     @Override
@@ -89,25 +96,16 @@ public class DWG implements DirectedWeightedGraph{
 
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
-        HashMap<String,Edge> temp = (HashMap<String, Edge>)(this.E.clone());
         ArrayList<String> list = new ArrayList<>();
-
-        for (String key : this.E.keySet())
+        Set s = this.E.entrySet();
+        Iterator set_iter = s.iterator();
+        while (set_iter.hasNext())
         {
-            // "20,30,0,5" ----> [20,30,0,5]
-            String[] edge_data = key.split(",");
-
-            // Keep only keys that start with given source vertex
-            if (edge_data[0].compareTo(node_id+"") == 0)
-            {
-                list.add(key);
-            }
+            if (set_iter.next().toString().split(",")[0].compareTo(node_id+"") != 0)
+                set_iter.remove();
         }
-
-        temp.entrySet().retainAll(list);
         this.iter_edges = true;
-        Iterator t = temp.entrySet().iterator();
-        return t;
+        return s.iterator();
     }
 
     @Override

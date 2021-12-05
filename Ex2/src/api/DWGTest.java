@@ -75,47 +75,39 @@ class DWGTest {
         assertEquals(g.nodeSize(), 0);
     }
 
-//    @Test
-//    void getEdge() {
-//    }
-//
-//    @Test
-//    void addNode() {
-//    }
-//
-//    @Test
-//    void connect() {
-//    }
-//
-//    @Test
-//    void nodeIter() {
-//    }
-//
-//    @Test
-//    void edgeIter() {
-//    }
-//
-//    @Test
-//    void testEdgeIter() {
-//    }
-//
-//    @Test
-//    void removeNode() {
-//    }
-//
-//    @Test
-//    void removeEdge() {
-//    }
-//
-//    @Test
-//    void nodeSize() {
-//    }
-//
-//    @Test
-//    void edgeSize() {
-//    }
-//
-//    @Test
-//    void getMC() {
-//    }
+    @Test
+    void t3() {
+
+        Vertex v0 = new Vertex(new Point3D(0 , 0 , 0 ) , 0);
+        Vertex v1 = new Vertex(new Point3D(1 , 0 , 0 ) , 1);
+        Vertex v2 = new Vertex(new Point3D(2 , 0 , 0 ) , 2);
+        Vertex v3 = new Vertex(new Point3D(3 , 0 , 0 ) , 3);
+
+        Edge e0 = new Edge(v1, v0 , 1);
+        Edge e1 = new Edge(v0, v2 , 1);
+        Edge e2 = new Edge(v0, v3 , 2);
+        Edge e3 = new Edge(v3, v1 , 0.5);
+
+
+        g.addNode(v0);
+        g.addNode(v1);
+        g.addNode(v2);
+        g.addNode(v3);
+
+        g.connect(e0);
+        g.connect(e1);
+        g.connect(e2);
+        g.connect(e3);
+
+        // Check that iterator over single node returns only relevant edges.
+        Iterator iter = g.edgeIter(0);
+        int c = 0;
+        while (iter.hasNext())
+        {
+            c++;
+            System.out.println(iter.next());
+        }
+        assertEquals(c , 2);
+    }
+
 }
