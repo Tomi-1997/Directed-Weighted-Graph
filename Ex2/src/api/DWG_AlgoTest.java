@@ -23,9 +23,9 @@ class DWG_AlgoTest {
     @Test
     void getGraph() {
 
-        Vertex v0 = new Vertex(new Point3D(0 , 0 , 0 ) , 0);
-        Vertex v1 = new Vertex(new Point3D(1 , 0 , 0 ) , 1);
-        Edge e0 = new Edge(v1, v0 , 1);
+        Vertex v0 = new Vertex(new Point3D(0, 0, 0), 0);
+        Vertex v1 = new Vertex(new Point3D(1, 0, 0), 1);
+        Edge e0 = new Edge(v1, v0, 1);
 
         g.addNode(v0);
         g.addNode(v1);
@@ -33,8 +33,8 @@ class DWG_AlgoTest {
 
         ga.init(g);
 
-        assertEquals(ga.getGraph().edgeSize() , 1);
-        assertEquals(ga.getGraph().nodeSize() , 2);
+        assertEquals(ga.getGraph().edgeSize(), 1);
+        assertEquals(ga.getGraph().nodeSize(), 2);
 
     }
 
@@ -44,10 +44,10 @@ class DWG_AlgoTest {
         // Make sure copy is deep, first define graph and copy it
         // then clear first graph and make sure copy is unaffected.
 
-        Vertex v0 = new Vertex(new Point3D(0 , 0 , 0 ) , 0);
-        Vertex v1 = new Vertex(new Point3D(1 , 0 , 0 ) , 1);
+        Vertex v0 = new Vertex(new Point3D(0, 0, 0), 0);
+        Vertex v1 = new Vertex(new Point3D(1, 0, 0), 1);
 
-        Edge e0 = new Edge(v1, v0 , 1);
+        Edge e0 = new Edge(v1, v0, 1);
 
 
         g.addNode(v0);
@@ -59,13 +59,13 @@ class DWG_AlgoTest {
 
         g.removeNode(0);
         g.removeNode(1);
-        g.removeEdge(0,1);
+        g.removeEdge(0, 1);
 
-        assertEquals(g.nodeSize() , 0);
-        assertEquals(g.edgeSize() , 0);
+        assertEquals(g.nodeSize(), 0);
+        assertEquals(g.edgeSize(), 0);
 
-        assertEquals(copy.nodeSize() , 2);
-        assertEquals(copy.edgeSize() , 1);
+        assertEquals(copy.nodeSize(), 2);
+        assertEquals(copy.edgeSize(), 1);
     }
 
     @Test
@@ -79,19 +79,19 @@ class DWG_AlgoTest {
     @Test
     void shortestPath() {
 
-        Vertex v0 = new Vertex(new Point3D(0 , 0 , 0 ) , 0);
-        Vertex v1 = new Vertex(new Point3D(1 , 1 , 0 ) , 1);
-        Vertex v2 = new Vertex(new Point3D(2 , 2 , 0 ) , 2);
-        Vertex v3 = new Vertex(new Point3D(3 , 3 , 0 ) , 3);
-        Vertex v4 = new Vertex(new Point3D(4 , 4 , 0 ) , 4);
+        Vertex v0 = new Vertex(new Point3D(0, 0, 0), 0);
+        Vertex v1 = new Vertex(new Point3D(1, 1, 0), 1);
+        Vertex v2 = new Vertex(new Point3D(2, 2, 0), 2);
+        Vertex v3 = new Vertex(new Point3D(3, 3, 0), 3);
+        Vertex v4 = new Vertex(new Point3D(4, 4, 0), 4);
 
 
-        Edge e0 = new Edge(v0, v1 , 1);
-        Edge e1 = new Edge(v0, v2 , 4);
-        Edge e2 = new Edge(v1, v2 , 1);
-        Edge e3 = new Edge(v2, v3 , 1);
-        Edge e4 = new Edge(v2, v4 , 2);
-        Edge e5 = new Edge(v3, v4 , 2);
+        Edge e0 = new Edge(v0, v1, 1);
+        Edge e1 = new Edge(v0, v2, 4);
+        Edge e2 = new Edge(v1, v2, 1);
+        Edge e3 = new Edge(v2, v3, 1);
+        Edge e4 = new Edge(v2, v4, 2);
+        Edge e5 = new Edge(v3, v4, 2);
 
         g.addNode(v0);
         g.addNode(v1);
@@ -107,11 +107,34 @@ class DWG_AlgoTest {
         g.connect(e5);
 
         ga.init(g);
-        List<NodeData> sp = ga.shortestPath(0,4);
+        List<NodeData> sp = ga.shortestPath(0, 4);
         for (NodeData n : sp)
             System.out.println(n.getKey());
     }
 
+    @Test
+    void GTranpose()
+    {
+        Vertex v0 = new Vertex(new Point3D(0 , 0 , 0 ) , 0);
+        Vertex v1 = new Vertex(new Point3D(1 , 0 , 0 ) , 1);
+        Vertex v2 = new Vertex(new Point3D(2 , 0 , 0 ) , 2);
+
+
+        Edge e0 = new Edge(v0, v1 , 1);
+        Edge e1 = new Edge(v1, v2 , 1);
+
+        g.addNode(v0);
+        g.addNode(v1);
+        g.addNode(v2);
+
+        g.connect(e0);
+        g.connect(e1);
+        ga.init(g);
+        g = ga.getTranspose();
+
+        assertEquals(g.edgeSize() , ga.getTranspose().edgeSize());
+
+    }
     @Test
     void center() {
     }

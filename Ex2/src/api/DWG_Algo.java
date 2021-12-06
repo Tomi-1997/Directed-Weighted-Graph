@@ -38,7 +38,29 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
 
     @Override
     public boolean isConnected() {
-        return false;
+        if(this.G.nodeSize() == 1 || this.G.nodeSize() == 0) return true;
+        if(shortestPathDist(0,1) == -1) return false;
+        this.G = getTranspose();
+        boolean transpose = true;
+        if(shortestPathDist(0,1) == -1) transpose = false;
+        this.G = getTranspose();
+        return transpose;
+    }
+    public DWG getTranspose()
+    {
+       DWG g_t = new DWG();
+
+       for (Vertex v : this.G.get_V().values())
+       {
+            g_t.addNode(v);
+       }
+        for (Edge e : this.G.get_E().values())
+        {
+            Edge e_t = new Edge(e.dst, e.src, e.getWeight());
+            g_t.connect(e_t);
+        }
+        return g_t;
+
     }
 
     @Override
