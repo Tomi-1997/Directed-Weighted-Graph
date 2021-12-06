@@ -54,14 +54,14 @@ class DWGTest {
             g.addNode( new Vertex(new Point3D(i,0,0) , i));
         }
 
-        Iterator iter = g.nodeIter();
+        Iterator<NodeData> iter = g.nodeIter();
         int counter = 0;
 
         // Make sure iterator iterates over all nodes
         while(iter.hasNext())
         {
-         counter++;
-         iter.next();
+             counter++;
+            iter.next().getLocation();
         }
         assertEquals(g.nodeSize(), counter);
 
@@ -100,12 +100,11 @@ class DWGTest {
         g.connect(e3);
 
         // Check that iterator over single node returns only relevant edges.
-        Iterator iter = g.edgeIter(0);
+        Iterator<EdgeData> iter = g.edgeIter(0);
         int c = 0;
         while (iter.hasNext())
         {
             c++;
-            System.out.println(iter.next());
         }
         assertEquals(c , 2);
     }

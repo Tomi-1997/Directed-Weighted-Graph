@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class DWG implements DirectedWeightedGraph{
 
@@ -75,37 +74,39 @@ public class DWG implements DirectedWeightedGraph{
         changes++;
     }
 
-    public void connect(Edge e)
+    public void connect(EdgeData e)
     {
-        connect(e.src.id, e.dst.id, e.weight);
+        connect(e.getSrc(), e.getDest(), e.getWeight());
     }
 
     @Override
     public Iterator<NodeData> nodeIter() {
-        Iterator v = this.V.entrySet().iterator();
+        Iterator v = this.V.values().iterator();
         this.iter_general = true;
         return v;
     }
 
     @Override
     public Iterator<EdgeData> edgeIter() {
-        Iterator e = this.E.entrySet().iterator();
+        Iterator e = this.E.values().iterator();
         this.iter_edges = true;
         return e;
     }
 
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
-        ArrayList<String> list = new ArrayList<>();
-        Set s = this.E.entrySet();
-        Iterator set_iter = s.iterator();
-        while (set_iter.hasNext())
+        Iterator<Edge> edge_iter = this.E.values().iterator();
+        ArrayList<EdgeData> temp = new ArrayList<>();
+
+        while(edge_iter.hasNext())
         {
-            if (set_iter.next().toString().split(",")[0].compareTo(node_id+"") != 0)
-                set_iter.remove();
+            EdgeData e = edge_iter.next();
+            if (e.getSrc() == node_id)
+                temp.add(e);
         }
+
         this.iter_edges = true;
-        return s.iterator();
+        return temp.iterator();
     }
 
     @Override
@@ -137,5 +138,15 @@ public class DWG implements DirectedWeightedGraph{
     @Override
     public int getMC() {
         return this.changes;
+    }
+
+    public HashMap<String,Vertex> get_V()
+    {
+        return this.V;
+    }
+
+    public HashMap<String,Edge> get_E()
+    {
+        return this.E;
     }
 }
