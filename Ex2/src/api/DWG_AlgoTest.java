@@ -187,10 +187,10 @@ class DWG_AlgoTest {
         // It takes around 15 seconds to get the center of
         // a connected graph with around 20 edges for each vertex.
 
-        DirectedWeightedGraph g = GraphBuilder.getConnected(100);
-        ga.init(g);
-
-        System.out.println(ga.center().getKey());
+//        DirectedWeightedGraph g = GraphBuilder.getConnected(100);
+//        ga.init(g);
+//
+//        System.out.println(ga.center().getKey());
 
     }
     @Test
