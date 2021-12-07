@@ -4,8 +4,8 @@ package api;
 public class GraphBuilder {
     /**
      *
-     * @param v
-     * @returns a connected graph with V vertexes
+     * @param v - number of nodes
+     * @return a connected graph with V vertexes
      */
     public static DirectedWeightedGraph getConnected(int v)
     {
@@ -25,16 +25,16 @@ public class GraphBuilder {
 
         // Connect first to second, second to third and so on
         for (int i = 0; i < v - 1; i++) {
-            g.connect( i , i+1 , 1);
+            g.connect( i , i+1 , (Math.random() + 0.5));
         }
-        g.connect(v-1, 0 , 1);
+        g.connect(v-1, 0 , (Math.random() + 0.5));
 
 
         // Connect random edges
         e--;
         for (int i = 0; i < v; i++) {
             for (int j = 0; j < e; j++) {
-                g.connect(i , randInt_exclude(i , v), 1);
+                g.connect(i , randInt_exclude(i , v), (Math.random() + 0.5));
             }
         }
 
@@ -43,8 +43,8 @@ public class GraphBuilder {
 
     /***
      *
-     * @param v
-     * @returns a graph with V vertexes, could be connected, could be not.
+     * @param v - number of nodes
+     * @return a graph with V vertexes, could be connected, could be not.
      */
     public static DirectedWeightedGraph getGraph(int v)
     {
@@ -58,7 +58,7 @@ public class GraphBuilder {
 
         for (int i = 0; i < v; i++)
         {
-            Vertex ver = new Vertex(new Point3D( Math.random() , Math.random() , 0) , i);
+            Vertex ver = new Vertex(new Point3D( i , 0, 0) , i);
             g.addNode(ver);
         }
 
@@ -66,7 +66,7 @@ public class GraphBuilder {
         e--;
         for (int i = 0; i < v; i++) {
             for (int j = 0; j < e; j++) {
-                g.connect(i , randInt_exclude(i , v), Math.random());
+                g.connect(i , randInt_exclude(i , v), (Math.random() + 0.5));
             }
         }
 

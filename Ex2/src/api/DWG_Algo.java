@@ -2,13 +2,11 @@ package api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.w3c.dom.Node;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
 
@@ -53,6 +51,10 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         return transpose;
     }
 
+    /***
+     *
+     * @return a directed weighted graph with every edge's source and destination flipped.
+     */
     public DWG getTranspose()
     {
        DWG g_t = new DWG();
@@ -79,7 +81,7 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         if (l.size() == 0) return -1;
         for (int i = 0; i<l.size()-1; i++)
         {
-            EdgeData e = this.G.getEdge(i, i +1);
+            EdgeData e = this.G.getEdge(l.get(i).getKey(),l.get(i +1).getKey());
             sum += e.getWeight();
         }
         return sum;
@@ -187,13 +189,74 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public NodeData center() {
-        return null;
+    public NodeData center()
+    {
+        if (this.getGraph().nodeSize() == 0) return null;
+        if (this.getGraph().nodeSize() == 1)
+            return this.getGraph().nodeIter().next();
+
+        // For each node key - put the maximum distance it can travel.
+        HashMap<Integer, Double> node_and_max_dist = new HashMap<>();
+        for (NodeData n : this.G.get_V().values())
+        {
+            node_and_max_dist.put(n.getKey(), max_dist(n.getKey()));
+        }
+
+        // Return the node with the minimum value.
+        return min_value(node_and_max_dist);
     }
 
+    /***
+     *
+     * @param - node_and_max_dist(Hash map of integer key and a value)
+     * @return the node which has the minimal value.
+     */
+    private NodeData min_value(HashMap<Integer, Double> node_and_max_dist) {
+        NodeData min = this.G.nodeIter().next();
+        double min_val = Double.MAX_VALUE;
+        for (Integer i : node_and_max_dist.keySet())
+        {
+            if (node_and_max_dist.get(i) < min_val)
+            {
+                min = G.getNode(i);
+                min_val = node_and_max_dist.get(i);
+            }
+        }
+        return min;
+    }
+
+    /***
+     *
+     * @param key - node id
+     * @return the maximum travel distance this node needs to go to reach every other node.
+     */
+    private Double max_dist(int key) {
+        double ans = 0;
+        for (Vertex v: this.G.get_V().values())
+        {
+            double current = shortestPathDist(key , v.getKey());
+            if (current != -1 && current > ans)
+                ans = current;
+        }
+        return ans;
+    }
+
+    /***
+     * Using the greedy method, get the shortest path from every adjacent pair
+     * of elements and merge to one list.
+     */
     @Override
-    public List<NodeData> tsp(List<NodeData> cities) {
-        return null;
+    public List<NodeData> tsp(List<NodeData> cities)
+    {
+        ArrayList<NodeData> ans = new ArrayList<>();
+        for (int i = 0; i < cities.size()-1; i++) {
+            ans.addAll(shortestPath
+                    (cities.get(i).getKey(),cities.get(i+1).getKey()));
+
+            if (i != cities.size() - 2)
+                ans.remove(ans.size()-1);
+        }
+        return ans;
     }
 
     @Override
