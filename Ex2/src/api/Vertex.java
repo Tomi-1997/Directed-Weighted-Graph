@@ -12,7 +12,7 @@ public class Vertex implements NodeData {
         this.pos = pos;
         this.id = id;
         this.weight = 0;
-        this.info = this.pos.x+"," +this.pos.y+","+this.pos.z+ "," + this.id;
+        this.info = this.pos.x+"," +this.pos.y+","+this.pos.z;
         this.tag = 0;
     }
 

@@ -1,6 +1,10 @@
 package api;
-import org.w3c.dom.Node;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -21,7 +25,8 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public DirectedWeightedGraph copy() {
+    public DirectedWeightedGraph copy()
+    {
 
         DWG newG = new DWG();
 
@@ -37,15 +42,17 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public boolean isConnected() {
+    public boolean isConnected()
+    {
         if(this.G.nodeSize() == 1 || this.G.nodeSize() == 0) return true;
-        if(shortestPathDist(0,1) == -1) return false;
+        if(shortestPath(0,1).size() == 0) return false;
         this.G = getTranspose();
         boolean transpose = true;
-        if(shortestPathDist(0,1) == -1) transpose = false;
+        if(shortestPath(0,1).size() == 0) transpose = false;
         this.G = getTranspose();
         return transpose;
     }
+
     public DWG getTranspose()
     {
        DWG g_t = new DWG();
@@ -64,8 +71,18 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public double shortestPathDist(int src, int dest) {
-        return 0;
+    public double shortestPathDist(int src, int dest)
+    {
+        double sum = 0;
+        List<NodeData> l = shortestPath(src, dest);
+
+        if (l.size() == 0) return -1;
+        for (int i = 0; i<l.size()-1; i++)
+        {
+            EdgeData e = this.G.getEdge(i, i +1);
+            sum += e.getWeight();
+        }
+        return sum;
     }
 
     @Override
@@ -130,6 +147,11 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
             current = parents[current];
         }
         list.add(this.G.getNode(src));
+
+        // Reset nodes to unvisited.
+        for (NodeData n : this.G.get_V().values())
+            n.setTag(0);
+
         return reverse(list);
     }
 
@@ -175,8 +197,39 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public boolean save(String file) {
-        return false;
+    public boolean save(String file)
+    {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        ArrayList<EdgeJson> Edges = new ArrayList<>();
+        ArrayList<NodeJson> Nodes = new ArrayList<>();
+
+        int i = 0;
+        for (EdgeData e : this.G.get_E().values())
+        {
+            EdgeJson data = new EdgeJson(e.getSrc(), e.getWeight(), e.getDest());
+            Edges.add(data);
+        }
+        for (NodeData n: this.G.get_V().values())
+        {
+            NodeJson ndata = new NodeJson(n.getInfo() , n.getKey() );
+            Nodes.add(ndata);
+        }
+
+        MyJsonFile j = new MyJsonFile(Edges, Nodes);
+
+        try
+        {
+            FileWriter fileSave = new FileWriter(file);
+            fileSave.write(gson.toJson(j));
+            fileSave.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     @Override

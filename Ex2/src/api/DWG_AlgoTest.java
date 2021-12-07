@@ -1,13 +1,20 @@
 package api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DWG_AlgoTest {
+
+    // Template:
+    // DirectedWeightedGraph g = GraphBuilder.getConnected(v);
+    // DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+    // ga.init(g);
 
     DWG g = new DWG();
     DWG_Algo ga = new DWG_Algo();
@@ -69,7 +76,14 @@ class DWG_AlgoTest {
     }
 
     @Test
-    void isConnected() {
+    void isConnected(){
+        int v = 20;
+        for (int i = 0; i < v; i++) {
+            DirectedWeightedGraph g = GraphBuilder.getConnected(v);
+            DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+            ga.init(g);
+            assertTrue(ga.isConnected());
+        }
     }
 
     @Test
@@ -144,7 +158,14 @@ class DWG_AlgoTest {
     }
 
     @Test
-    void save() {
+    void save()
+    {
+        DirectedWeightedGraph g = GraphBuilder.getConnected(10);
+        DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+        ga.init(g);
+
+        System.out.println("saved");
+        assertTrue(ga.save("deleteMe.json"));
     }
 
     @Test

@@ -3,9 +3,9 @@ package api;
 public class Edge implements EdgeData {
 
     public Vertex src;
-    public Vertex dst;
     public double weight;
-    public String info;
+    public Vertex dst;
+    private String info;
 
     /** tag represents color
      * 0 = white
@@ -17,7 +17,9 @@ public class Edge implements EdgeData {
         this.src = src;
         this.dst = dst;
         this.weight = weight;
-        this.info = this.src.id + ","  + this.dst.id  + "," + this.weight;
+        this.info = "\"src\": " + this.src.id + ",\n"
+                +  "\"w\": " + this.dst.id  + ",\n" +
+                "\"dest\": " + this.weight;
         this.tag = 0;
     }
 
