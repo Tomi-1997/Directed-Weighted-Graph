@@ -32,7 +32,7 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         {
             newG.addNode(v);
         }
-        for (Edge e : this.G.get_E().values())
+        for (EdgeData e : this.G.get_E().values())
         {
             newG.connect(e);
         }
@@ -97,6 +97,10 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         int node_size = this.G.nodeSize();
         // Reset all nodes to "infinity" and source to 0
         // Assuming all node keys are integers 0 , 1 , .. , V.size -1
+
+        // weightSet is just to keep relevant nodes, to save time by not iterating over the same
+        // nodes each time we look for the next minimal node.
+        HashMap<Integer , Double> weightSet = new HashMap<>();
         double[] weight = new double[node_size];
 
         // Memorise each node's parent.
@@ -106,8 +110,10 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         for (NodeData n : this.G.get_V().values())
         {
             weight[n.getKey()] = Double.MAX_VALUE;
+            weightSet.put(n.getKey() , 0.0);
         }
         weight[src] = 0;
+
 
         // Dijkstra
         int current = src;
@@ -116,8 +122,6 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         // While there are connected nodes unvisited.
         while (src_iterator.hasNext())
         {
-            // Set tag to visited
-            this.G.getNode(current).setTag(1);
 
             // If current weight is less than previous -> replace it and the parent.
             while (src_iterator.hasNext())
@@ -129,7 +133,9 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
                     parents[e.getDest()] = e.getSrc();
                 }
             }
-            current = getMin(weight);
+
+            weightSet.remove(current);
+            current = getMin(weight , weightSet);
             // If no other nodes to travel before reaching destination
             if (current == -1)
                 break;
@@ -149,13 +155,9 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
             current = parents[current];
         }
         list.add(this.G.getNode(src));
-
-        // Reset nodes to unvisited.
-        for (NodeData n : this.G.get_V().values())
-            n.setTag(0);
-
         return reverse(list);
     }
+
 
     private List<NodeData> reverse(ArrayList<NodeData> list) {
         ArrayList<NodeData> temp = new ArrayList<>();
@@ -166,25 +168,21 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         return temp;
     }
 
-    private int getMin(double[] a)
+    private int getMin(double[] a , HashMap<Integer, Double> set)
     {
-        if (a.length == 0)
-            return -1;
-
-        if (a.length == 1)
-            return 0;
-
         double ans = Double.MAX_VALUE;
         int indx = -1;
-        for (int i = 0; i < a.length; i++)
+
+        Iterator<Integer> setIter = set.keySet().iterator();
+        while (setIter.hasNext())
         {
-            if (a[i] < ans && this.G.getNode(i).getTag() == 0)
+            int current = setIter.next();
+            if (a[current] < ans)
             {
-                ans = a[i];
-                indx = i;
+                indx = current;
+                ans = a[current];
             }
         }
-
         return indx;
     }
 
