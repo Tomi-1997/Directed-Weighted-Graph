@@ -11,6 +11,7 @@ public class GraphBuilder {
     {
         if (v <= 0) return null;
         DirectedWeightedGraph g = new DWG();
+        v++;
 
         // Edge number is the minimal between v/2 and 20
         int e = v / 2;
@@ -19,7 +20,7 @@ public class GraphBuilder {
 
         for (int i = 0; i < v; i++)
         {
-            Vertex ver = new Vertex(new Point3D( i , 0 , 0) , i);
+            Vertex ver = new Vertex(new Point3D( i , Math.random() , 0) , i);
             g.addNode(ver);
         }
 
@@ -50,6 +51,7 @@ public class GraphBuilder {
     {
         if (v <= 0) return null;
         DirectedWeightedGraph g = new DWG();
+        v++;
 
         // Edge number is the minimal between v/2 and 20
         int e = v / 2;
@@ -58,7 +60,7 @@ public class GraphBuilder {
 
         for (int i = 0; i < v; i++)
         {
-            Vertex ver = new Vertex(new Point3D( i , 0, 0) , i);
+            Vertex ver = new Vertex(new Point3D( i + Math.random() , Math.random(), 0) , i);
             g.addNode(ver);
         }
 

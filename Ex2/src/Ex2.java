@@ -1,5 +1,4 @@
-import api.DirectedWeightedGraph;
-import api.DirectedWeightedGraphAlgorithms;
+import api.*;
 
 /**
  * This class is the main class for Ex2 - your implementation will be tested using this class.
@@ -11,11 +10,12 @@ public class Ex2 {
      * @return
      */
     public static DirectedWeightedGraph getGrapg(String json_file) {
-        DirectedWeightedGraph ans = null;
-        // ****** Add your code here ******
-        //
-        // ********************************
-        return ans;
+        DirectedWeightedGraph g = new DWG();
+        DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+        ga.init(g);
+        ga.load(json_file);
+
+        return ga.getGraph();
     }
     /**
      * This static function will be used to test your implementation
@@ -23,11 +23,12 @@ public class Ex2 {
      * @return
      */
     public static DirectedWeightedGraphAlgorithms getGrapgAlgo(String json_file) {
-        DirectedWeightedGraphAlgorithms ans = null;
-        // ****** Add your code here ******
-        //
-        // ********************************
-        return ans;
+        DirectedWeightedGraph g = new DWG();
+        DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+        ga.init(g);
+        ga.load(json_file);
+
+        return ga;
     }
     /**
      * This static function will run your GUI using the json fime.
@@ -35,9 +36,9 @@ public class Ex2 {
      *
      */
     public static void runGUI(String json_file) {
+
         DirectedWeightedGraphAlgorithms alg = getGrapgAlgo(json_file);
-        // ****** Add your code here ******
-        //
-        // ********************************
+        Graph_GUI gui = new Graph_GUI(alg , 500 , 500);
+
     }
 }
