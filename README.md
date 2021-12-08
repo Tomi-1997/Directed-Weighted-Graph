@@ -18,5 +18,3 @@ Minimal distance between two vertices.
 Given a list of vertices, returns an approximation of the shortest path that passes through them.
 ### Which node is the center
 Which vertex is the closest to all other vertices.
-
-## Graphical user interface implementation
