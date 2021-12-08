@@ -2,8 +2,7 @@
 This project aims to construct a graph, perform certain alogirthms on it, and to simulate it through a graphical user interface.
 
 ## Graph implementation
-A graph with a group of edges and vertices, G (V,E) is implemented 
-through two hashmaps:
+Our method of representing a graph with a group of edges and vertices, G (V,E) is with two hashmaps:
 One hash map for the edges for which each Edge has a string key containing the source vertex and destination vertex.
 Second hash map for the vertices for which each Vertex has a unique id, weight and position in a 2D plane.
 
