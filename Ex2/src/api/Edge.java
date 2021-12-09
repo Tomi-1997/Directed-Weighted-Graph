@@ -23,6 +23,17 @@ public class Edge implements EdgeData {
         this.tag = 0;
     }
 
+    public Edge(Vertex src, double weight , Vertex dst) {
+        this.src = src;
+        this.weight = weight;
+        this.dst = dst;
+
+        this.info = "\"src\": " + this.src.id + ",\n"
+                +  "\"w\": " + this.dst.id  + ",\n" +
+                "\"dest\": " + this.weight;
+        this.tag = 0;
+    }
+
     @Override
     public int getSrc() {
         return this.src.id;

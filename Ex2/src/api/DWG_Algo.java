@@ -2,8 +2,11 @@ package api;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import org.w3c.dom.Node;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -158,8 +161,8 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
         return reverse(list);
     }
 
-
-    private List<NodeData> reverse(ArrayList<NodeData> list) {
+    private List<NodeData> reverse(ArrayList<NodeData> list)
+    {
         ArrayList<NodeData> temp = new ArrayList<>();
         for (int i = list.size()-1; i >= 0; i--)
         {
@@ -294,7 +297,51 @@ public class DWG_Algo implements DirectedWeightedGraphAlgorithms{
     }
 
     @Override
-    public boolean load(String file) {
-        return false;
+    public boolean load(String file)
+    {
+        String input = "";
+        String s="";
+        try {
+            FileReader f = new FileReader(file);
+            BufferedReader readFile = new BufferedReader(f);
+            s = readFile.readLine();
+            while (s != null)
+            {
+                input = input + s;
+                s = readFile.readLine();
+            }
+            f.close();
+            readFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        Gson gson = new Gson();
+        MyJsonFile mjf = gson.fromJson(input , MyJsonFile.class);
+        DWG newG = new DWG();
+        for (NodeJson n : mjf.getNodes())
+        {
+            String[] pos = n.getPos().split(",");
+            Point3D p = new Point3D(Double.parseDouble(pos[0]) ,Double.parseDouble(pos[1]),Double.parseDouble(pos[2]));
+            Vertex v = new Vertex(p , n.getId());
+            newG.addNode(v);
+
+//            System.out.println(v.getInfo());
+//            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        }
+
+        for (EdgeJson e : mjf.getEdges())
+        {
+            Vertex u = (Vertex) newG.getNode(e.getSrc());
+            Vertex v = (Vertex) newG.getNode(e.getDst());
+
+            Edge ed = new Edge( u ,  e.getWeight() , v);
+//            System.out.println(ed.getSrc() + ","+ ed.getWeight() + "," + ed.getDest());
+//            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            newG.connect(ed);
+        }
+
+        init(newG);
+        return true;
     }
 }

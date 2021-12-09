@@ -1,9 +1,15 @@
 package api;
 
+import org.w3c.dom.Node;
+
+import javax.sound.sampled.Clip;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Graph_GUI {
@@ -11,10 +17,10 @@ public class Graph_GUI {
     private DirectedWeightedGraph g;
     private DirectedWeightedGraphAlgorithms ga;
 
-    private final int height;
-    private final int width;
+    private  int height;
+    private  int width;
 
-    private JFrame frame;
+    public JFrame frame;
     private GraphDrawer graphDraw;
 
     public Graph_GUI(DirectedWeightedGraphAlgorithms ga, int h, int w)
@@ -39,6 +45,7 @@ public class Graph_GUI {
 
         // Drawer
         frame.add(this.graphDraw);
+
         // Menu
         JMenuBar myMenu = new JMenuBar();
         frame.setJMenuBar(myMenu);
@@ -49,21 +56,39 @@ public class Graph_GUI {
         JMenuItem load = new JMenuItem("Load");
         JMenuItem newGraph = new JMenuItem("Re-roll Graph");
         JMenuItem isConnected = new JMenuItem("Connected");
+        JMenuItem Center = new JMenuItem("Center");
+
 
         file.add(save);
         file.add(load);
         file.add(newGraph);
         algo.add(isConnected);
+        algo.add(Center);
 
-        ActionListener myListener = new myListener(this);
+        ActionListener myListener = new myListener(this, this.graphDraw);
 
         file.addActionListener(myListener);
         algo.addActionListener(myListener);
         newGraph.addActionListener(myListener);
+        save.addActionListener(myListener);
+        load.addActionListener(myListener);
+        isConnected.addActionListener(myListener);
+        Center.addActionListener(myListener);
 
         myMenu.add(file);
         myMenu.add(algo);
+
         frame.setVisible(true);
+    }
+
+    public Graph_GUI (DirectedWeightedGraphAlgorithms ga)
+    {
+        this.ga = ga;
+        this.g = ga.getGraph();
+        this.height = 500;
+        this.width = 500;
+
+        init_frame();
     }
 
     public void setGraph(DirectedWeightedGraph newG)
@@ -71,77 +96,155 @@ public class Graph_GUI {
         this.g = newG;
         ga.init(newG);
         this.graphDraw.g = newG;
+
+        this.graphDraw.center = null;
         this.frame.repaint();
     }
-
 
     class myListener implements ActionListener
     {
         Graph_GUI myGUI;
+        GraphDrawer myDraw;
 
-        public myListener(Graph_GUI graph_gui) {
+        public myListener(Graph_GUI graph_gui , GraphDrawer myDraw)
+        {
             this.myGUI = graph_gui;
+            this.myDraw = myDraw;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(ActionEvent e)
+        {
             String action = e.getActionCommand();
-            if (action.equals("Re-roll Graph"))
+            switch (action)
             {
-                System.out.println("New graph rolled");
-                this.myGUI.setGraph(GraphBuilder.getGraph((int)(Math.random()*20) + 10));
+                case "Re-roll Graph":
+                {
+                    this.myGUI.setGraph(GraphBuilder.getGraph((int)(Math.random()*20) + 5));
+                    break;
+                }
+                case "Save":
+                {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Specify a file to save");
+
+                    int userSelection = fileChooser.showSaveDialog(this.myGUI.frame);
+
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        File fileToSave = fileChooser.getSelectedFile();
+                        this.myGUI.ga.save(fileToSave.getAbsolutePath()+".json");
+                    }
+                    break;
+                }
+                case "Load":
+                {
+                    JFileChooser chooser = new JFileChooser();
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter( "Json files",
+                            "json");
+                    chooser.setFileFilter(filter);
+                    int returnVal = chooser.showOpenDialog(this.myGUI.frame);
+                    if(returnVal == JFileChooser.APPROVE_OPTION) {
+                                this.myGUI.ga.load(chooser.getSelectedFile().getAbsolutePath());
+                                this.myDraw.g = ga.getGraph();
+                                this.myDraw.repaint();
+                    }
+                    break;
+                }
+                case "Connected":
+                {
+                    this.myDraw.isConnected = this.myGUI.ga.isConnected();
+                    JOptionPane.showMessageDialog(null , this.myDraw.isConnected);
+                    break;
+                }
+                case "Center":
+                {
+                    if (this.myGUI.g.nodeSize() < 40)
+                    this.myDraw.center = this.myGUI.ga.center();
+                    break;
+                }
+
             }
         }
     }
 
     class GraphDrawer extends JComponent {
         public DirectedWeightedGraph g;
+        NodeData center;
+        boolean isConnected;
+        ArrayList<NodeData> tsp;
 
         public GraphDrawer(DirectedWeightedGraph g) {
             this.g = g;
         }
 
         public void paint(Graphics g) {
-            g.setColor(Color.BLACK);
             Dimension myDim = this.getSize();
 
             // scales[0] = min X, scales[1] = min Y, scales[2] = max X , scales[3] = max Y
             double[] scales = new double[4];
             init(this.g.nodeIter(), scales);
 
-            // DRAW VERTICES
+            // DRAW VERTICES AND EDGES
             Iterator<NodeData> iterator_node = this.g.nodeIter();
             while (iterator_node.hasNext()) {
 
-                // Scale node position according to minimal x,y / maximum x,y and screen size.
-                NodeData v = iterator_node.next();
-                int x = (int) ((myDim.width / scales[2]) * v.getLocation().x() + scales[0]);
-                int y = (int) ((myDim.height / scales[3]) * v.getLocation().y() + scales[1]);
-
-                // Scale dot size to screen
-                double width = Math.max(5, myDim.width / 100);
-                double height = Math.max(5, myDim.height / 100);
-
-                // So the dots won't appear squished
-                if (height > width)
-                    width = height;
-                else
-                    height = width;
+                NodeData node = iterator_node.next();
 
                 // Node
-                g.fillOval(x, y, (int) width, (int) height);
+                drawNode(node , myDim , scales , g , Color.BLACK);
 
                 // Edges
-                Iterator<EdgeData> iterator_edge = this.g.edgeIter(v.getKey());
-                while (iterator_edge.hasNext()) {
+                Iterator<EdgeData> iterator_edge = this.g.edgeIter();
+                while (iterator_edge.hasNext())
+                {
                     EdgeData e = iterator_edge.next();
-                    int dst_x = (int) ((myDim.width / scales[2]) * this.g.getNode(e.getDest()).getLocation().x() + scales[0]);
-                    int dst_y = (int) ((myDim.width / scales[3]) * this.g.getNode(e.getDest()).getLocation().y() + scales[1]);
+                    drawEdge(e , myDim , scales , g , Color.BLACK , this.g.getNode(e.getSrc()));
+                }
 
-                    g.drawLine(x, y, dst_x, dst_y);
-
+                if (this.center != null)
+                {
+                    drawNode(this.center , myDim , scales , g , Color.RED);
                 }
             }
+        }
+
+        private void drawEdge(EdgeData e , Dimension myDim , double[] scales , Graphics g,  Color cl , NodeData v)
+        {
+
+            int x = (int) ((myDim.width / scales[2]) * v.getLocation().x() + scales[0]);
+            int y = (int) ((myDim.height / scales[3]) * v.getLocation().y() + scales[1]);
+
+            int dst_x = (int) ((myDim.width / scales[2]) * this.g.getNode(e.getDest()).getLocation().x() + scales[0]);
+            int dst_y = (int) ((myDim.width / scales[3]) * this.g.getNode(e.getDest()).getLocation().y() + scales[1]);
+
+            g.setColor(cl);
+            g.drawLine(x, y, dst_x, dst_y);
+        }
+
+        private void drawNode(NodeData v , Dimension myDim ,double[] scales , Graphics g, Color cl)
+        {
+
+            // Scale node position according to minimal x,y / maximum x,y and screen size.
+            int x = (int) ((myDim.width / scales[2]) * v.getLocation().x() );
+            int y = (int) ((myDim.height / scales[3]) * v.getLocation().y() );
+
+//            System.out.println(x);
+//            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+//            System.out.println(y);
+
+            // Scale dot size to screen
+            double width = Math.max(5, myDim.width / 100);
+            double height = Math.max(5, myDim.height / 100);
+
+            // So the dots won't appear squished
+            if (height > width)
+                width = height;
+            else
+                height = width;
+
+            // Node
+            g.setColor(cl);
+            g.fillOval(x, y, (int) width, (int) height);
         }
     }
 

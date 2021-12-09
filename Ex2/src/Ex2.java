@@ -35,10 +35,24 @@ public class Ex2 {
      * @param json_file - a json file (e.g., G1.json - G3.gson)
      *
      */
-    public static void runGUI(String json_file) {
-
+    public static void runGUI(String json_file)
+    {
         DirectedWeightedGraphAlgorithms alg = getGrapgAlgo(json_file);
         Graph_GUI gui = new Graph_GUI(alg , 500 , 500);
+    }
 
+    public static void main(String[]args)
+    {
+        if (args.length > 0)
+        {
+            String filename = args[0];
+            runGUI(filename);
+        }
+        else
+        {
+            DirectedWeightedGraphAlgorithms algo = new DWG_Algo();
+            algo.init(GraphBuilder.getGraph(20));
+            Graph_GUI gui = new Graph_GUI(algo,400 , 400);
+        }
     }
 }
