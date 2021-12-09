@@ -6,6 +6,8 @@ Our method of representing a graph with a group of edges and vertices, G (V,E) i
 One hash map for the edges for which each Edge has a string key containing the source vertex and destination vertex.
 And a second hash map for the vertices for which each Vertex has a unique id, weight and position in a 2D plane.
 
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Psuedo-3d%20graph%20simulation_2.gif)
+
 ## Algorithm implementations
 There are several methods to perform on our graph, such as:
 ### Connected
@@ -16,5 +18,3 @@ Minimal distance between two vertices.
 Given a list of vertices, returns an approximation of the shortest path that passes through them.
 ### Which node is the center
 Which vertex is the closest to all other vertices.
-
-## Graphical user interface implementation
