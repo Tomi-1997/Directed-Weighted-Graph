@@ -3,10 +3,10 @@ This project aims to construct a graph, perform certain alogirthms on it, and to
 
 ### How run
 download to jar file 
-go to file location in commands line
-type java -jar Ex2.jar "your json file of a graph"
---
-or type with no arguments for a random graph.
+go to file location in commands line and type: <br />
+java -jar Ex2.jar "your json file of a graph" <br />
+
+Or type with no arguments for a random graph. <br />
 type java -jar Ex2.jar
 
 ## Graph implementation
