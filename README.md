@@ -1,7 +1,7 @@
 # Directed Weighted Graph
 This project aims to construct a graph, perform certain alogirthms on it, and to simulate it through a graphical user interface.
 
-### How run
+### How to run
 download to jar file 
 go to file location in commands line and type: <br />
 java -jar Ex2.jar "your json file of a graph" <br />
