@@ -27,8 +27,18 @@ Given a list of vertices, returns an approximation of the shortest path that pas
 Which vertex is the closest to all other vertices.
 
 ## Analysis of DWG with large group of vertices
-Initialization:
+Initialization:  <br />
 1,000 : ~80 ms <br />
 10,000 : ~400 ms <br />
 100,000 : ~ 2 seconds <br />
 1,000,000 : Out of memory error <br />
+
+Shortest distance between two vertices: <br />
+1,000 : ~ 450 ms  <br />
+10,000 :  ~ 100 seconds <br />
+
+Checking if the graph is connected:  <br />
+1000 : ~900 ms <br />
+10,000 :  2 ~ 3 minutes <br />
+
+
