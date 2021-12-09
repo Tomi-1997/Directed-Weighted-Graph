@@ -2,10 +2,10 @@
 This project aims to construct a graph, perform certain alogirthms on it, and to simulate it through a graphical user interface.
 
 ### How to run
-Download the jar file and navigate to the file's location in commands line and type: <br />
-java -jar Ex2.jar "your json file of a graph" <br />
+Download the jar file and navigate to the file's location through the command line and type: <br />
+java -jar Ex2.jar "JsonWithDataOfGraph.json" <br />
 
-Or type the same line with no arguments for a random graph. <br />
+Or type the same line with no arguments for a random graph and then load from the menu or roll a new graph. <br />
 java -jar Ex2.jar
 
 ## Graph implementation
