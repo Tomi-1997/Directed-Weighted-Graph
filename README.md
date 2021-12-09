@@ -5,6 +5,7 @@ This project aims to construct a graph, perform certain alogirthms on it, and to
 download to jar file 
 go to file location in commands line
 type java -jar Ex2.jar "your json file of a graph"
+--
 or type with no arguments for a random graph.
 type java -jar Ex2.jar
 
