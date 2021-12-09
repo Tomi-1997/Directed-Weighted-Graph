@@ -25,3 +25,10 @@ Minimal distance between two vertices.
 Given a list of vertices, returns an approximation of the shortest path that passes through them.
 ### Which node is the center
 Which vertex is the closest to all other vertices.
+
+## Analysis of DWG with large group of vertices
+Initialization:
+1,000 : ~80 ms <br />
+10,000 : ~400 ms <br />
+100,000 : ~ 2 seconds <br />
+1,000,000 : Out of memory error <br />
