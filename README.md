@@ -2,12 +2,11 @@
 This project aims to construct a graph, perform certain alogirthms on it, and to simulate it through a graphical user interface.
 
 ### How to run
-download to jar file 
-go to file location in commands line and type: <br />
+Download the jar file and navigate to the file's location in commands line and type: <br />
 java -jar Ex2.jar "your json file of a graph" <br />
 
-Or type with no arguments for a random graph. <br />
-type java -jar Ex2.jar
+Or type the same line with no arguments for a random graph. <br />
+java -jar Ex2.jar
 
 ## Graph implementation
 Our method of representing a graph with a group of edges and vertices, G (V,E) is with two hashmaps:
