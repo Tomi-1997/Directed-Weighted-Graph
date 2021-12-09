@@ -1,6 +1,13 @@
 # Directed Weighted Graph
 This project aims to construct a graph, perform certain alogirthms on it, and to simulate it through a graphical user interface.
 
+### How run
+download to jar file 
+go to file location in commands line
+type java -jar Ex2.jar "your json file of a graph"
+or type with no arguments for a random graph.
+type java -jar Ex2.jar
+
 ## Graph implementation
 Our method of representing a graph with a group of edges and vertices, G (V,E) is with two hashmaps:
 One hash map for the edges for which each Edge has a string key containing the source vertex and destination vertex.
