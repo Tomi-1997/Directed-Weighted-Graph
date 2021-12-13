@@ -18,7 +18,7 @@ Old version:
 
 Newer Version:
 Example for a small graph:
-![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example2)
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example1.png)
 
 Same graph but with shortestpath from node 8 to node 13 highlighted:
 ![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example2_path_8_13.png)
