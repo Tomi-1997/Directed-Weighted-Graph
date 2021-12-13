@@ -13,7 +13,19 @@ Our method of representing a graph with a group of edges and vertices, G (V,E) i
 One hash map for the edges for which each Edge has a string key containing the source vertex and destination vertex.
 And a second hash map for the vertices for which each Vertex has a unique id, weight and position in a 2D plane.
 
-![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Psuedo-3d%20graph%20simulation_2.gif)
+Old version:
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Psuedo-3d%20graph%20simulation_2.gif)
+
+Newer Version:
+Example for a small graph:
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example2)
+
+Same graph but with shortestpath from node 8 to node 13 highlighted:
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example2_path_8_13.png)
+
+Example for a large graph with center (orange) , path between two nodes (green) , and a list of nodes that contains nodes 7,35,45 in blue.
+![Demo](https://github.com/bfwontcodewithme/Ex2_OOP/blob/main/Examples/Example3_tsp_center_shortestPath.png)
+
 
 ## Algorithm implementations
 There are several methods to perform on our graph, such as:
