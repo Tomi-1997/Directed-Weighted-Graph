@@ -252,7 +252,7 @@ public class Graph_GUI {
                     {
                         err.printStackTrace();
                         JOptionPane.showMessageDialog(null , "Invalid input, or no such path");
-
+                        this.myGUI.graphDraw.tsp = null;
                         break;
                     }
                     JOptionPane.showMessageDialog(null , "Highlighting in blue a path which passes through input");
@@ -363,12 +363,14 @@ public class Graph_GUI {
             // DRAW TSP
             if (this.tsp != null)
             {
-                for (int i = 0; i < tsp.size(); i++) {
+                for (int i = 0; i < tsp.size() - 1; i++) {
                     drawNode(tsp.get(i) , myDim , scales , g , Color.BLUE);
                     EdgeData e = this.g.getEdge(tsp.get(i).getKey(), tsp.get(i+1).getKey());
                     if (e != null)
                         drawEdge(e , myDim , scales , g , Color.BLUE);
                 }
+                drawNode(tsp.get(tsp.size()-1) , myDim , scales , g , Color.BLUE);
+
             }
 
             // DRAW THE SHORTEST PATH
