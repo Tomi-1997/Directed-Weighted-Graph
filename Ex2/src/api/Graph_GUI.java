@@ -1,5 +1,7 @@
 package api;
 
+import org.w3c.dom.Node;
+
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -52,21 +54,31 @@ public class Graph_GUI {
         JMenu file = new JMenu("File");
         JMenu algo = new JMenu("Algo");
 
+        // FILE
         JMenuItem save = new JMenuItem("Save");
         JMenuItem load = new JMenuItem("Load");
         JMenuItem newGraph = new JMenuItem("Re-roll Graph");
+
+        // ALGO
         JMenuItem isConnected = new JMenuItem("Connected");
         JMenuItem Center = new JMenuItem("Center");
+        JMenuItem add = new JMenuItem("Add");
+        JMenuItem tsp = new JMenuItem("Tsp");
+        JMenuItem spd = new JMenuItem("ShortestPathDist");
+        JMenuItem sp = new JMenuItem("ShortestPath");
 
-
+        // ADD ALL
         file.add(save);
         file.add(load);
         file.add(newGraph);
         algo.add(isConnected);
         algo.add(Center);
+        algo.add(add);
+        algo.add(tsp);
+        algo.add(spd);
+        algo.add(sp);
 
         ActionListener myListener = new myListener(this, this.graphDraw);
-
         file.addActionListener(myListener);
         algo.addActionListener(myListener);
         newGraph.addActionListener(myListener);
@@ -74,6 +86,10 @@ public class Graph_GUI {
         load.addActionListener(myListener);
         isConnected.addActionListener(myListener);
         Center.addActionListener(myListener);
+        add.addActionListener(myListener);
+        tsp.addActionListener(myListener);
+        spd.addActionListener(myListener);
+        sp.addActionListener(myListener);
 
         myMenu.add(file);
         myMenu.add(algo);
@@ -100,6 +116,8 @@ public class Graph_GUI {
         this.graphDraw.g = newG;
 
         this.graphDraw.center = null;
+        this.graphDraw.tsp = null;
+        this.graphDraw.shortestPath = null;
         this.frame.repaint();
     }
 
@@ -122,7 +140,20 @@ public class Graph_GUI {
             {
                 case "Re-roll Graph":
                 {
-                    this.myGUI.setGraph(GraphBuilder.getGraph((int)(Math.random()*20) + 5));
+                    String input = JOptionPane.showInputDialog("How many vertices?");
+                    int v = (int) (Math.random()*20 + 5);
+                    try
+                    {
+                        v = Integer.parseInt(input);
+                        v--;
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        err.printStackTrace();
+                        System.out.println("Input is:" + input);
+                    }
+                    if (v < 1 || v > 1000) v = (int) (Math.random() * 20 + 5);
+                    this.myGUI.setGraph(GraphBuilder.getGraph(v));
                     break;
                 }
                 case "Save":
@@ -160,9 +191,9 @@ public class Graph_GUI {
                 }
                 case "Center":
                 {
-                    if (this.myGUI.g.nodeSize() < 120)
+                    if (this.myGUI.g.nodeSize() < 100)
                     {
-                        JOptionPane.showMessageDialog(null , "Now calculating center");
+                        JOptionPane.showMessageDialog(null , "Now calculating center and highlighting in orange");
                         this.myDraw.center = this.myGUI.ga.center();
                     }
                     else
@@ -170,16 +201,117 @@ public class Graph_GUI {
 
                     break;
                 }
+                case "Add":
+                {
+                    String input = JOptionPane.showInputDialog("Type new vertex location: three numbers x,y,z separated by a comma " +
+                            "\n for example 20,40,0" +
+                            "\n current pos for one of the vertexes:" +
+                            this.myGUI.g.getNode(0).getInfo());
+                    String[] input_split = input.split(",");
+                    double x = 0 , y = 0, z = 0;
+                    try
+                    {
+                        x = Double.parseDouble(input_split[0]);
+                        y = Double.parseDouble(input_split[1]);
+                    }
+                    catch (Exception err)
+                    {
+                        err.printStackTrace();
+                        break;
+                    }
+                    int key = this.myGUI.g.nodeSize();
+                    Vertex v = new Vertex(new Point3D(x,y,z),key);
 
+                    DirectedWeightedGraph copy_graph = this.myGUI.ga.copy();
+                    copy_graph.addNode(v);
+                    this.myGUI.setGraph(copy_graph);
+                    break;
+
+                }
+                case "Remove":
+                {
+                    String input = JOptionPane.showInputDialog("Insert key to remove:");
+                    int key = -1;
+                }
+                case "Tsp":
+                {
+                    String input = JOptionPane.showInputDialog("Insert several key nodes to travel separated by comma:" +
+                            "\n Current node size is:" + this.myGUI.g.nodeSize());
+                    String[] input_split = input.split(",");
+                    try
+                    {
+                        ArrayList<NodeData> tsp = new ArrayList<>();
+                        for (String s : input_split)
+                        {
+                            tsp.add(this.myGUI.g.getNode(Integer.parseInt(s)));
+                        }
+
+                        this.myGUI.graphDraw.tsp = (ArrayList<NodeData>) this.myGUI.ga.tsp(tsp);
+                    }
+                    catch (Exception err)
+                    {
+                        err.printStackTrace();
+                        JOptionPane.showMessageDialog(null , "Invalid input, or no such path");
+
+                        break;
+                    }
+                    JOptionPane.showMessageDialog(null , "Highlighting in blue a path which passes through input");
+                    break;
+                }
+                case "ShortestPathDist":
+                {
+                    String input = JOptionPane.showInputDialog("Insert source key and destination key, separated by a comma.");
+                    int source = -1;
+                    int dest = -1;
+                    String[] str = input.split(",");
+                    try
+                    {
+                        source = Integer.parseInt(str[0]);
+                        dest = Integer.parseInt(str[1]);
+
+                        double cost = this.myGUI.ga.shortestPathDist(source , dest);
+                        JOptionPane.showMessageDialog(null , "The shortest distance is:" + cost);
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        err.printStackTrace();
+                        break;
+                    }
+                    break;
+                }
+                case "ShortestPath":
+                {
+                    String input = JOptionPane.showInputDialog("Insert source key and destination key, separated by a comma.");
+                    int source = -1;
+                    int dest = -1;
+                    String[] str = input.split(",");
+                    try
+                    {
+                        source = Integer.parseInt(str[0]);
+                        dest = Integer.parseInt(str[1]);
+
+                        JOptionPane.showMessageDialog(null , "Now highlighting path in green");
+                        ArrayList<NodeData> list = (ArrayList<NodeData>) this.myGUI.ga.shortestPath(source , dest);
+                        this.myGUI.graphDraw.shortestPath = list;
+                    }
+                    catch (NumberFormatException err)
+                    {
+                        err.printStackTrace();
+                        break;
+                    }
+                    break;
+                }
             }
         }
     }
 
-    class GraphDrawer extends JComponent {
+    class GraphDrawer extends JComponent
+    {
         public DirectedWeightedGraph g;
         NodeData center;
         boolean isConnected;
         ArrayList<NodeData> tsp;
+        ArrayList<NodeData> shortestPath;
 
         public GraphDrawer(DirectedWeightedGraph g)
         {
@@ -199,6 +331,14 @@ public class Graph_GUI {
 //            System.out.println("X Difference: " + (scales[2] - scales[0]));
 //            System.out.println("Y Difference: " + (scales[3] - scales[1]));
 
+            // DRAW EDGES
+            Iterator<EdgeData> iterator_edge = this.g.edgeIter();
+            while (iterator_edge.hasNext())
+            {
+                EdgeData e = iterator_edge.next();
+                drawEdge(e , myDim , scales , g , Color.gray );
+            }
+
             // DRAW VERTICES
             Iterator<NodeData> iterator_node = this.g.nodeIter();
             while (iterator_node.hasNext())
@@ -207,25 +347,42 @@ public class Graph_GUI {
                 drawNode(node , myDim , scales , g , Color.BLACK);
             }
 
-            // DRAW EDGES
-            Iterator<EdgeData> iterator_edge = this.g.edgeIter();
-            while (iterator_edge.hasNext())
-            {
-                EdgeData e = iterator_edge.next();
-                drawEdge(e , myDim , scales , g , Color.BLACK );
-            }
-
             // DRAW CENTER only if center was calculated
             if (this.center != null)
             {
-                drawNode(this.center , myDim , scales , g , Color.RED);
+                drawNode(this.center , myDim , scales , g , Color.ORANGE);
                 Iterator<EdgeData> cen_iterator = this.g.edgeIter(this.center.getKey());
                 // DRAW CENTER'S EDGES
                 while (cen_iterator.hasNext())
                 {
                     EdgeData cen_edge = cen_iterator.next();
-                    drawEdge(cen_edge , myDim , scales , g , Color.RED );
+                    drawEdge(cen_edge , myDim , scales , g , Color.ORANGE );
                 }
+            }
+
+            // DRAW TSP
+            if (this.tsp != null)
+            {
+                for (int i = 0; i < tsp.size(); i++) {
+                    drawNode(tsp.get(i) , myDim , scales , g , Color.BLUE);
+                    EdgeData e = this.g.getEdge(tsp.get(i).getKey(), tsp.get(i+1).getKey());
+                    if (e != null)
+                        drawEdge(e , myDim , scales , g , Color.BLUE);
+                }
+            }
+
+            // DRAW THE SHORTEST PATH
+            if (this.shortestPath != null)
+            {
+                for (int i = 0; i < this.shortestPath.size() - 1; i++)
+                {
+                    drawNode(shortestPath.get(i), myDim , scales , g , Color.GREEN);
+                    EdgeData e = this.g.getEdge(this.shortestPath.get(i).getKey(), this.shortestPath.get(i+1).getKey());
+                    if (e != null)
+                        drawEdge(e , myDim , scales , g , Color.GREEN);
+                }
+                drawNode(shortestPath.get(shortestPath.size()-1), myDim , scales , g , Color.GREEN);
+
             }
 
         }
@@ -257,8 +414,8 @@ public class Graph_GUI {
 //            System.out.println(y);
 
             // Scale dot size to screen
-            double width = Math.max(5, myDim.width / 100);
-            double height = Math.max(5, myDim.height / 100);
+            double width = Math.max(5, myDim.width / 50);
+            double height = Math.max(5, myDim.height / 50);
 
             // So the dots won't appear squished
             if (height > width)
@@ -266,14 +423,29 @@ public class Graph_GUI {
             else
                 height = width;
 
+            x = (int) ( x - width/2);
+            y = (int) ( y - height/2);
+
             // Node
             g.setColor(cl);
             g.fillOval(x, y, (int) width, (int) height);
+            g.setColor(Color.RED);
+
+            for (int i = 0; i < 3; i++)
+                g.drawString(v.getKey()+"" , (int)(x + width/4),(int)(y + 5*height/6));
         }
 
+        /***
+         *
+         * @param x
+         * @param max
+         * @param min
+         * @param ratio
+         * @return x with relation to current window size
+         */
         public int scale(double x , double max, double min , double ratio)
         {
-            return (int) (( ratio * 0.95  * (x - min) / (max - min)));
+            return (int) (( (ratio * 0.93)  * (x - min) / (max - min)) + ratio*0.02);
         }
     }
 
