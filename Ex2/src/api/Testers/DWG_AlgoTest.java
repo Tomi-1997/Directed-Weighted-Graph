@@ -1,9 +1,10 @@
-package api;
+package api.Testers;
 
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DWG_AlgoTest {
@@ -241,5 +242,17 @@ class DWG_AlgoTest {
 
     @Test
     void load() {
+    }
+
+    @Test
+    void heavy_tests()
+    {
+//        int V = 100000;
+//        DirectedWeightedGraph g = GraphBuilder.getGraph(V);
+//        DirectedWeightedGraphAlgorithms ga = new DWG_Algo();
+//        ga.init(g);
+
+        System.out.println(ga.isConnected());
+
     }
 }

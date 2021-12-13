@@ -2,7 +2,6 @@ package api;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 
 public class DWG implements DirectedWeightedGraph{
 
@@ -101,12 +100,11 @@ public class DWG implements DirectedWeightedGraph{
         while(edge_iter.hasNext())
         {
             EdgeData e = edge_iter.next();
-            if (e.getSrc() == node_id)
+            if (e.getSrc() == node_id || e.getDest() == node_id)
                 temp.add(e);
         }
-
         this.iter_edges = true;
-        return temp.iterator();
+        return temp.stream().iterator();
     }
 
     @Override

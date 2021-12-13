@@ -51,8 +51,9 @@ public class Ex2 {
         else
         {
             DirectedWeightedGraphAlgorithms algo = new DWG_Algo();
-            algo.init(GraphBuilder.getGraph(20));
-            Graph_GUI gui = new Graph_GUI(algo,400 , 400);
+            algo.init(GraphBuilder.getGraph(50));
+            //algo.load("C:\\Users\\tomto\\IdeaProjects\\Ex2_OOP\\Ex2\\data\\G1.json");
+            Graph_GUI gui = new Graph_GUI(algo,800 , 800);
         }
     }
 }

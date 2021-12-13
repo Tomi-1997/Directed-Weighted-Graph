@@ -1,8 +1,5 @@
 package api;
 
-import org.w3c.dom.Node;
-
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -10,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class Graph_GUI {
@@ -22,6 +20,8 @@ public class Graph_GUI {
 
     public JFrame frame;
     private GraphDrawer graphDraw;
+    private String imagePath = "C:\\Users\\tomto\\IdeaProjects\\Ex2_OOP\\Ex2\\src\\api\\DesignIdeas\\happy.png";
+
 
     public Graph_GUI(DirectedWeightedGraphAlgorithms ga, int h, int w)
     {
@@ -78,6 +78,8 @@ public class Graph_GUI {
         myMenu.add(file);
         myMenu.add(algo);
 
+        ImageIcon icon = new ImageIcon(this.imagePath);
+        this.frame.setIconImage(icon.getImage());
         frame.setVisible(true);
     }
 
@@ -158,8 +160,14 @@ public class Graph_GUI {
                 }
                 case "Center":
                 {
-                    if (this.myGUI.g.nodeSize() < 40)
-                    this.myDraw.center = this.myGUI.ga.center();
+                    if (this.myGUI.g.nodeSize() < 120)
+                    {
+                        JOptionPane.showMessageDialog(null , "Now calculating center");
+                        this.myDraw.center = this.myGUI.ga.center();
+                    }
+                    else
+                        JOptionPane.showMessageDialog(null , "Graph too big");
+
                     break;
                 }
 
@@ -173,49 +181,66 @@ public class Graph_GUI {
         boolean isConnected;
         ArrayList<NodeData> tsp;
 
-        public GraphDrawer(DirectedWeightedGraph g) {
+        public GraphDrawer(DirectedWeightedGraph g)
+        {
             this.g = g;
         }
 
         public void paint(Graphics g) {
+
             Dimension myDim = this.getSize();
 
             // scales[0] = min X, scales[1] = min Y, scales[2] = max X , scales[3] = max Y
             double[] scales = new double[4];
             init(this.g.nodeIter(), scales);
 
-            // DRAW VERTICES AND EDGES
+
+//            System.out.println(Arrays.toString(scales));
+//            System.out.println("X Difference: " + (scales[2] - scales[0]));
+//            System.out.println("Y Difference: " + (scales[3] - scales[1]));
+
+            // DRAW VERTICES
             Iterator<NodeData> iterator_node = this.g.nodeIter();
-            while (iterator_node.hasNext()) {
-
+            while (iterator_node.hasNext())
+            {
                 NodeData node = iterator_node.next();
-
-                // Node
                 drawNode(node , myDim , scales , g , Color.BLACK);
+            }
 
-                // Edges
-                Iterator<EdgeData> iterator_edge = this.g.edgeIter();
-                while (iterator_edge.hasNext())
-                {
-                    EdgeData e = iterator_edge.next();
-                    drawEdge(e , myDim , scales , g , Color.BLACK , this.g.getNode(e.getSrc()));
-                }
+            // DRAW EDGES
+            Iterator<EdgeData> iterator_edge = this.g.edgeIter();
+            while (iterator_edge.hasNext())
+            {
+                EdgeData e = iterator_edge.next();
+                drawEdge(e , myDim , scales , g , Color.BLACK );
+            }
 
-                if (this.center != null)
+            // DRAW CENTER only if center was calculated
+            if (this.center != null)
+            {
+                drawNode(this.center , myDim , scales , g , Color.RED);
+                Iterator<EdgeData> cen_iterator = this.g.edgeIter(this.center.getKey());
+                // DRAW CENTER'S EDGES
+                while (cen_iterator.hasNext())
                 {
-                    drawNode(this.center , myDim , scales , g , Color.RED);
+                    EdgeData cen_edge = cen_iterator.next();
+                    drawEdge(cen_edge , myDim , scales , g , Color.RED );
                 }
             }
+
         }
 
-        private void drawEdge(EdgeData e , Dimension myDim , double[] scales , Graphics g,  Color cl , NodeData v)
+        private void drawEdge(EdgeData e , Dimension myDim , double[] scales , Graphics g,  Color cl)
         {
 
-            int x = (int) ((myDim.width / scales[2]) * v.getLocation().x() + scales[0]);
-            int y = (int) ((myDim.height / scales[3]) * v.getLocation().y() + scales[1]);
+            NodeData src = this.g.getNode(e.getSrc());
+            NodeData dest = this.g.getNode(e.getDest());
 
-            int dst_x = (int) ((myDim.width / scales[2]) * this.g.getNode(e.getDest()).getLocation().x() + scales[0]);
-            int dst_y = (int) ((myDim.width / scales[3]) * this.g.getNode(e.getDest()).getLocation().y() + scales[1]);
+            int x = scale(src.getLocation().x() , scales[2] , scales[0] , myDim.getWidth());
+            int y = scale(src.getLocation().y() , scales[3] , scales[1] , myDim.getHeight());
+
+            int dst_x = scale(dest.getLocation().x() , scales[2] , scales[0] , myDim.getWidth());
+            int dst_y = scale(dest.getLocation().y() , scales[3] , scales[1] , myDim.getHeight());
 
             g.setColor(cl);
             g.drawLine(x, y, dst_x, dst_y);
@@ -224,9 +249,8 @@ public class Graph_GUI {
         private void drawNode(NodeData v , Dimension myDim ,double[] scales , Graphics g, Color cl)
         {
 
-            // Scale node position according to minimal x,y / maximum x,y and screen size.
-            int x = (int) ((myDim.width / scales[2]) * v.getLocation().x() );
-            int y = (int) ((myDim.height / scales[3]) * v.getLocation().y() );
+            int x = scale(v.getLocation().x() , scales[2] , scales[0] , myDim.getWidth());
+            int y = scale(v.getLocation().y() , scales[3] , scales[1] , myDim.getHeight());
 
 //            System.out.println(x);
 //            System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -245,6 +269,11 @@ public class Graph_GUI {
             // Node
             g.setColor(cl);
             g.fillOval(x, y, (int) width, (int) height);
+        }
+
+        public int scale(double x , double max, double min , double ratio)
+        {
+            return (int) (( ratio * 0.95  * (x - min) / (max - min)));
         }
     }
 
